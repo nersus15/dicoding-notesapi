@@ -106,10 +106,11 @@ class NotesService {
     async verifyNoteAccess(noteId, userId) {
         try {
             await this.verifyNoteOwner(noteId, userId);
+            return;
         } catch (error) {
-            // if (error instanceof NotFoundError) {
+            if (error instanceof NotFoundError) {
                 throw error;
-            // }
+            }
         }
 
         try {
