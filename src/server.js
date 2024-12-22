@@ -23,8 +23,7 @@ const _exports = require('./api/exports');
 const Jwt = require('@hapi/jwt');
 const ProducerService = require('./services/rabbitmq/ProducerService');
 const ExportsValidator = require('./validator/exports');
-const StorageService = require('./services/storage/StorageService');
-const path = require('path');
+const StorageService = require('./services/S3/StorageService');
 const uploads = require('./api/uploads');
 const UploadsValidator = require('./validator/uploads');
 const Inert = require('@hapi/inert');
@@ -34,7 +33,7 @@ const init = async () => {
   const notesService = new NotesService(collaborationsService);
   const usersService = new UsersService();
   const authenticationService = new AuthenticationService();
-  const storageService = new StorageService(path.resolve(__dirname, 'api/uploads/file/images'));
+  const storageService = new StorageService();
   const server = Hapi.server({
     port: process.env.PORT,
     host: process.env.HOST,
@@ -138,7 +137,8 @@ const init = async () => {
       const r = h.response({
           status: 'error',
           message: "Kami mengalami kegagalan server",
-          error: response.message
+          error: response.message,
+          backtrack: response.stack
       });
 
       r.code(500);
