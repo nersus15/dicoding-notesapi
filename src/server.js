@@ -27,13 +27,16 @@ const StorageService = require('./services/S3/StorageService');
 const uploads = require('./api/uploads');
 const UploadsValidator = require('./validator/uploads');
 const Inert = require('@hapi/inert');
+const CacheService = require('./services/redis/CacheService');
 
 const init = async () => {
-  const collaborationsService = new CollaborationsService();
-  const notesService = new NotesService(collaborationsService);
+  const cacheService = new CacheService();
+  const collaborationsService = new CollaborationsService(cacheService);
+  const notesService = new NotesService(collaborationsService, cacheService);
   const usersService = new UsersService();
   const authenticationService = new AuthenticationService();
   const storageService = new StorageService();
+  
   const server = Hapi.server({
     port: process.env.PORT,
     host: process.env.HOST,
